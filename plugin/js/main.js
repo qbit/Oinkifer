@@ -3,6 +3,7 @@
 var wordList = {
 	"Donald": "Oinkifer",
 	"Trump": "Tiny Hands",
+	"Trump": "Tiny Hands",
 	"great": "oink",
 	"again": "oinkoink",
 	"vote": "squeeel",
@@ -28,10 +29,9 @@ var wordList = {
 
 
 //Check to see if Trump is mentioned.
-var r = /trump/i;
+var r = new RegExp(/trump/, 'i');
 var s = r.exec(document.body.textContent);
 
-//Trump was mentioned.  Oinkify!
 if (s) {
 	console.log("Trump found. Oinkify!")
 
@@ -42,26 +42,30 @@ if (s) {
 	for (var prop in wordList) {
 		regex.push(prop);
 	}
-	regex = new RegExp(regex.join('|'), "g");
+	regex = new RegExp(regex.join('|'), "ig");
 
 	//Replace only text nodes
-	textReplace(document.body);
+	textReplace(document.body, regex);
 }
 
 
 //We only want to change text appearing on the page, not scripts or links.
-function textReplace(node) {
+function textReplace(node, rex) {
 	if (node.nodeType === 3) { // 3 is a text node
-		node.nodeValue = node.nodeValue.replace(regex, function (match) {
-			return wordList[match];
+		node.nodeValue = node.nodeValue.replace(rex, function (match) {
+			for (m in wordList) {
+				if (m.toLowerCase() === match.toLowerCase()) {
+					return wordList[m];
+				}
+			}
 		});
 		return;
 	}
 
 	if (node.nodeType === 1) { // 1 is an element
-		$(node).contents().each(function () {
-			textReplace(this);
-		});
+		for (var i = 0; i < node.childNodes.length; i++) {
+			textReplace(node.childNodes[i], rex);
+		}
 	}
 }
 

@@ -10,7 +10,6 @@
 				"<all_urls>"
 			],
 			"js": [
-				"vendor/jquery.min.js",
 				"js/main.js"
 			]
 		}
